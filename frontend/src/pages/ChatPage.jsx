@@ -1,8 +1,10 @@
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useGetChannelsQuery } from '../slices/channelsApi'
-import { useGetMessagesQuery } from '../slices/messagesApi'
+import { useGetMessagesQuery, messagesApi } from '../slices/messagesApi'
 import { setCurrentChannelId } from '../slices/uiSlice'
+import MessageForm from '../components/MessageForm'
+import socket from '../socket'
 
 const ChatPage = () => {
   const dispatch = useDispatch()
@@ -16,10 +18,20 @@ const ChatPage = () => {
       const defaultChannel = channels.find((c) => c.name === 'general') || channels[0]
       dispatch(setCurrentChannelId(defaultChannel.id))
     }
-  }, [channels, currentChannelId, dispatch])// почему тут нету сообщений
+  }, [channels, currentChannelId, dispatch])
+
+  useEffect(() => {
+    const handleNewMessage = () => {
+      dispatch(messagesApi.util.invalidateTags([{ type: 'Message', id: 'ALL' }]))
+    }
+    socket.on('newMessage', handleNewMessage)
+    return () => {
+      socket.off('newMessage', handleNewMessage)
+    }
+  }, [dispatch])
 
   if (channelsLoading || messagesLoading) {
-    return <div className="container mt-5">Загрузка...</div> // при первом рендере. а второй рендер запускается из-за того, что выполнил работу useGetChannelsQuery()  
+    return <div className="container mt-5">Загрузка...</div>
   }
 
   const channelMessages = (messages || []).filter(
@@ -45,14 +57,18 @@ const ChatPage = () => {
             ))}
           </ul>
         </div>
-        <div className="col-9">
-          <div className="p-3">
+        <div className="col-9 d-flex flex-column">
+          <div className="p-3 flex-grow-1">
+            {channelMessages.length === 0 && (
+              <div className="text-muted">Сообщений пока нет</div>
+            )}
             {channelMessages.map((message) => (
               <div key={message.id}>
                 <b>{message.username}</b>: {message.body}
               </div>
             ))}
           </div>
+          {currentChannelId && <MessageForm channelId={currentChannelId} />}
         </div>
       </div>
     </div>
