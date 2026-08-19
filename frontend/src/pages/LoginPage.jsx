@@ -2,10 +2,12 @@ import { useState } from 'react'
 import { Formik, Form, Field } from 'formik'
 import { Link, useNavigate } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
+import { useTranslation } from 'react-i18next'
 import { setCredentials } from '../slices/authSlice'
 import { useLoginMutation } from '../slices/authApi'
 
 const LoginPage = () => {
+  const { t } = useTranslation()
   const [authFailed, setAuthFailed] = useState(false)
   const navigate = useNavigate()
   const dispatch = useDispatch()
@@ -13,7 +15,7 @@ const LoginPage = () => {
 
   return (
     <div className="container mt-5">
-      <h1>Вход</h1>
+      <h1>{t('login.title')}</h1>
       <Formik
         initialValues={{ username: '', password: '' }}
         onSubmit={async (values, { setSubmitting }) => {
@@ -38,7 +40,7 @@ const LoginPage = () => {
         {({ isSubmitting }) => (
           <Form>
             <div className="mb-3">
-              <label htmlFor="username" className="form-label">Имя пользователя</label>
+              <label htmlFor="username" className="form-label">{t('login.username')}</label>
               <Field
                 type="text"
                 name="username"
@@ -47,7 +49,7 @@ const LoginPage = () => {
               />
             </div>
             <div className="mb-3">
-              <label htmlFor="password" className="form-label">Пароль</label>
+              <label htmlFor="password" className="form-label">{t('login.password')}</label>
               <Field
                 type="password"
                 name="password"
@@ -56,18 +58,18 @@ const LoginPage = () => {
               />
               {authFailed && (
                 <div className="invalid-feedback d-block">
-                  Неверные имя пользователя или пароль
+                  {t('login.error')}
                 </div>
               )}
             </div>
             <button type="submit" className="btn btn-primary" disabled={isSubmitting}>
-              Войти
+              {t('login.submit')}
             </button>
           </Form>
         )}
       </Formik>
       <div className="mt-3">
-        Нет аккаунта? <Link to="/signup">Регистрация</Link>
+        {t('login.noAccount')} <Link to="/signup">{t('login.signupLink')}</Link>
       </div>
     </div>
   )

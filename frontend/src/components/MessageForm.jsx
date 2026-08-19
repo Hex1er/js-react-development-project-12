@@ -1,9 +1,11 @@
 import { useState } from 'react'
 import { Formik, Form, Field } from 'formik'
 import { useSelector } from 'react-redux'
+import { useTranslation } from 'react-i18next'
 import { useAddMessageMutation } from '../slices/messagesApi'
 
 const MessageForm = ({ channelId }) => {
+  const { t } = useTranslation()
   const username = useSelector((state) => state.auth.username)
   const [addMessage] = useAddMessageMutation()
   const [sendError, setSendError] = useState(false)
@@ -29,10 +31,14 @@ const MessageForm = ({ channelId }) => {
     >
       {({ isSubmitting, values }) => (
         <Form className="d-flex p-2 border-top">
+          <label htmlFor="messageBody" className="visually-hidden">
+            {t('chat.sendPlaceholder')}
+          </label>
           <Field
+            id="messageBody"
             name="body"
             className="form-control me-2"
-            placeholder="Введите сообщение..."
+            placeholder={t('chat.sendPlaceholder')}
             autoComplete="off"
           />
           <button
@@ -40,11 +46,11 @@ const MessageForm = ({ channelId }) => {
             className="btn btn-primary"
             disabled={isSubmitting || !values.body.trim()}
           >
-            Отправить
+            {t('chat.send')}
           </button>
           {sendError && (
             <div className="text-danger ms-2 align-self-center">
-              Не удалось отправить, проверьте соединение
+              {t('chat.sendError')}
             </div>
           )}
         </Form>

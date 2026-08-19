@@ -1,10 +1,12 @@
 import { useRef, useEffect, useState } from 'react'
 import { Modal, Button } from 'react-bootstrap'
 import { useDispatch, useSelector } from 'react-redux'
+import { useTranslation } from 'react-i18next'
 import { closeModal, setCurrentChannelId } from '../slices/uiSlice'
 import { useRemoveChannelMutation, useGetChannelsQuery } from '../slices/channelsApi'
 
 const RemoveChannelModal = () => {
+  const { t } = useTranslation()
   const dispatch = useDispatch()
   const buttonRef = useRef(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -34,15 +36,15 @@ const RemoveChannelModal = () => {
   return (
     <Modal show onHide={() => dispatch(closeModal())} centered>
       <Modal.Header closeButton>
-        <Modal.Title>Удалить канал</Modal.Title>
+        <Modal.Title>{t('channels.deleteTitle')}</Modal.Title>
       </Modal.Header>
-      <Modal.Body>Уверены?</Modal.Body>
+      <Modal.Body>{t('channels.deleteConfirm')}</Modal.Body>
       <Modal.Footer>
         <Button variant="secondary" onClick={() => dispatch(closeModal())} disabled={isSubmitting}>
-          Отменить
+          {t('channels.cancel')}
         </Button>
         <Button ref={buttonRef} variant="danger" onClick={handleRemove} disabled={isSubmitting}>
-          Удалить
+          {t('channels.delete')}
         </Button>
       </Modal.Footer>
     </Modal>

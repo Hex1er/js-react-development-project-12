@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import { useTranslation } from 'react-i18next'
 import { useGetChannelsQuery, channelsApi } from '../slices/channelsApi'
 import { useGetMessagesQuery, messagesApi } from '../slices/messagesApi'
 import { setCurrentChannelId } from '../slices/uiSlice'
@@ -9,6 +10,7 @@ import ModalManager from '../components/ModalManager'
 import socket from '../socket'
 
 const ChatPage = () => {
+  const { t } = useTranslation()
   const dispatch = useDispatch()
   const currentChannelId = useSelector((state) => state.ui.currentChannelId)
 
@@ -28,7 +30,7 @@ const ChatPage = () => {
   useEffect(() => {
     if (channels && channels.length > 0 && !currentChannelId) {
       const defaultChannel = channels.find((c) => c.name === 'general') || channels[0]
-      dispatch(setCurrentChannelId(defaultChannel.id)) 
+      dispatch(setCurrentChannelId(defaultChannel.id))
     }
   }, [channels, currentChannelId, dispatch])
 
@@ -62,7 +64,7 @@ const ChatPage = () => {
   }, [dispatch])
 
   if (channelsLoading || messagesLoading) {
-    return <div className="container mt-5">Загрузка...</div>
+    return <div className="container mt-5">{t('chat.loading')}</div>
   }
 
   const channelMessages = (messages || []).filter(
@@ -78,7 +80,7 @@ const ChatPage = () => {
         <div className="col-9 d-flex flex-column">
           <div className="p-3 flex-grow-1 overflow-auto">
             {channelMessages.length === 0 && (
-              <div className="text-muted">Сообщений пока нет</div>
+              <div className="text-muted">{t('chat.noMessages')}</div>
             )}
             {channelMessages.map((message) => (
               <div key={message.id} className="text-break">

@@ -3,31 +3,33 @@ import { Formik, Form, Field, ErrorMessage } from 'formik'
 import * as Yup from 'yup'
 import { Link, useNavigate } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
+import { useTranslation } from 'react-i18next'
 import { setCredentials } from '../slices/authSlice'
 import { useSignupMutation } from '../slices/authApi'
 
-const schema = Yup.object().shape({
-  username: Yup.string()
-    .min(3, 'От 3 до 20 символов')
-    .max(20, 'От 3 до 20 символов')
-    .required('Обязательное поле'),
-  password: Yup.string()
-    .min(6, 'Не менее 6 символов')
-    .required('Обязательное поле'),
-  confirmPassword: Yup.string()
-    .oneOf([Yup.ref('password')], 'Пароли должны совпадать')
-    .required('Обязательное поле'),
-})
-
 const SignupPage = () => {
+  const { t } = useTranslation()
   const [signupFailed, setSignupFailed] = useState(false)
   const navigate = useNavigate()
   const dispatch = useDispatch()
   const [signup] = useSignupMutation()
 
+  const schema = Yup.object().shape({
+    username: Yup.string()
+      .min(3, t('validation.usernameLength'))
+      .max(20, t('validation.usernameLength'))
+      .required(t('validation.required')),
+    password: Yup.string()
+      .min(6, t('validation.passwordMin'))
+      .required(t('validation.required')),
+    confirmPassword: Yup.string()
+      .oneOf([Yup.ref('password')], t('validation.passwordsMustMatch'))
+      .required(t('validation.required')),
+  })
+
   return (
     <div className="container mt-5">
-      <h1>Регистрация</h1>
+      <h1>{t('signup.title')}</h1>
       <Formik
         initialValues={{ username: '', password: '', confirmPassword: '' }}
         validationSchema={schema}
@@ -56,7 +58,7 @@ const SignupPage = () => {
         {({ isSubmitting }) => (
           <Form>
             <div className="mb-3">
-              <label htmlFor="username" className="form-label">Имя пользователя</label>
+              <label htmlFor="username" className="form-label">{t('signup.username')}</label>
               <Field
                 type="text"
                 name="username"
@@ -66,7 +68,7 @@ const SignupPage = () => {
               <ErrorMessage name="username" component="div" className="invalid-feedback d-block" />
             </div>
             <div className="mb-3">
-              <label htmlFor="password" className="form-label">Пароль</label>
+              <label htmlFor="password" className="form-label">{t('signup.password')}</label>
               <Field
                 type="password"
                 name="password"
@@ -76,7 +78,7 @@ const SignupPage = () => {
               <ErrorMessage name="password" component="div" className="invalid-feedback d-block" />
             </div>
             <div className="mb-3">
-              <label htmlFor="confirmPassword" className="form-label">Подтвердите пароль</label>
+              <label htmlFor="confirmPassword" className="form-label">{t('signup.confirmPassword')}</label>
               <Field
                 type="password"
                 name="confirmPassword"
@@ -86,12 +88,12 @@ const SignupPage = () => {
               <ErrorMessage name="confirmPassword" component="div" className="invalid-feedback d-block" />
               {signupFailed && (
                 <div className="text-danger mt-1">
-                  Такой пользователь уже существует
+                  {t('signup.userExists')}
                 </div>
               )}
             </div>
             <button type="submit" className="btn btn-primary" disabled={isSubmitting}>
-              Зарегистрироваться
+              {t('signup.submit')}
             </button>
           </Form>
         )}

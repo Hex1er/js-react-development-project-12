@@ -1,14 +1,16 @@
 import { Dropdown, ButtonGroup, Button } from 'react-bootstrap'
 import { useDispatch } from 'react-redux'
+import { useTranslation } from 'react-i18next'
 import { setCurrentChannelId, openModal } from '../slices/uiSlice'
 
 const ChannelsList = ({ channels, currentChannelId }) => {
+  const { t } = useTranslation()
   const dispatch = useDispatch()
 
   return (
     <div className="d-flex flex-column h-100">
       <div className="d-flex justify-content-between align-items-center p-2">
-        <b>Каналы</b>
+        <b>{t('chat.channels')}</b>
         <button
           type="button"
           className="btn btn-sm btn-outline-primary"
@@ -34,18 +36,18 @@ const ChannelsList = ({ channels, currentChannelId }) => {
                   variant={channel.id === currentChannelId ? 'secondary' : 'light'}
                   id={`dropdown-${channel.id}`}
                 >
-                  <span className="visually-hidden">Управление каналом</span>
+                  <span className="visually-hidden">{t('channels.manage')}</span>
                 </Dropdown.Toggle>
                 <Dropdown.Menu>
                   <Dropdown.Item
                     onClick={() => dispatch(openModal({ type: 'renaming', channelId: channel.id }))}
                   >
-                    Переименовать
+                    {t('channels.rename')}
                   </Dropdown.Item>
                   <Dropdown.Item
                     onClick={() => dispatch(openModal({ type: 'removing', channelId: channel.id }))}
                   >
-                    Удалить
+                    {t('channels.delete')}
                   </Dropdown.Item>
                 </Dropdown.Menu>
               </Dropdown>

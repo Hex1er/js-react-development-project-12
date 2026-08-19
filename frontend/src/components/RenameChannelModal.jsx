@@ -3,10 +3,12 @@ import { Modal, Form as BsForm, Button } from 'react-bootstrap'
 import { Formik, Form } from 'formik'
 import * as Yup from 'yup'
 import { useDispatch, useSelector } from 'react-redux'
+import { useTranslation } from 'react-i18next'
 import { closeModal } from '../slices/uiSlice'
 import { useEditChannelMutation, useGetChannelsQuery } from '../slices/channelsApi'
 
 const RenameChannelModal = () => {
+  const { t } = useTranslation()
   const dispatch = useDispatch()
   const inputRef = useRef(null)
   const channelId = useSelector((state) => state.ui.modal.channelId)
@@ -26,10 +28,10 @@ const RenameChannelModal = () => {
 
   const schema = Yup.object().shape({
     name: Yup.string()
-      .min(3, 'От 3 до 20 символов')
-      .max(20, 'От 3 до 20 символов')
-      .required('Обязательное поле')
-      .notOneOf(existingNames, 'Такой канал уже существует'),
+      .min(3, t('validation.channelNameLength'))
+      .max(20, t('validation.channelNameLength'))
+      .required(t('validation.required'))
+      .notOneOf(existingNames, t('validation.channelNameUnique')),
   })
 
   if (!channel) return null
@@ -37,7 +39,7 @@ const RenameChannelModal = () => {
   return (
     <Modal show onHide={() => dispatch(closeModal())} centered>
       <Modal.Header closeButton>
-        <Modal.Title>Переименовать канал</Modal.Title>
+        <Modal.Title>{t('channels.renameTitle')}</Modal.Title>
       </Modal.Header>
       <Formik
         initialValues={{ name: channel.name }}
@@ -47,7 +49,7 @@ const RenameChannelModal = () => {
             await editChannel({ id: channelId, name: values.name }).unwrap()
             dispatch(closeModal())
           } catch {
-            setErrors({ name: 'Не удалось переименовать канал' })
+            setErrors({ name: t('channels.renameError') })
           } finally {
             setSubmitting(false)
           }
@@ -58,7 +60,7 @@ const RenameChannelModal = () => {
             <Modal.Body>
               <BsForm.Group>
                 <BsForm.Label htmlFor="renameChannelName" className="visually-hidden">
-                  Имя канала
+                  {t('channels.nameLabel')}
                 </BsForm.Label>
                 <BsForm.Control
                   id="renameChannelName"
@@ -76,10 +78,10 @@ const RenameChannelModal = () => {
             </Modal.Body>
             <Modal.Footer>
               <Button variant="secondary" onClick={() => dispatch(closeModal())} disabled={isSubmitting}>
-                Отменить
+                {t('channels.cancel')}
               </Button>
               <Button variant="primary" type="submit" disabled={isSubmitting}>
-                Отправить
+                {t('channels.submit')}
               </Button>
             </Modal.Footer>
           </Form>
