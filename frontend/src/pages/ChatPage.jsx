@@ -28,7 +28,7 @@ const ChatPage = () => {
   useEffect(() => {
     if (channels && channels.length > 0 && !currentChannelId) {
       const defaultChannel = channels.find((c) => c.name === 'general') || channels[0]
-      dispatch(setCurrentChannelId(defaultChannel.id))
+      dispatch(setCurrentChannelId(defaultChannel.id)) 
     }
   }, [channels, currentChannelId, dispatch])
 

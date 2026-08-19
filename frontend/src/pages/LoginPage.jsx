@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Formik, Form, Field } from 'formik'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
 import { setCredentials } from '../slices/authSlice'
 import { useLoginMutation } from '../slices/authApi'
@@ -66,6 +66,9 @@ const LoginPage = () => {
           </Form>
         )}
       </Formik>
+      <div className="mt-3">
+        Нет аккаунта? <Link to="/signup">Регистрация</Link>
+      </div>
     </div>
   )
 }
