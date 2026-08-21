@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useTranslation } from 'react-i18next'
 import { closeModal } from '../slices/uiSlice'
 import { useEditChannelMutation, useGetChannelsQuery } from '../slices/channelsApi'
+import { toast } from 'react-toastify'
 
 const RenameChannelModal = () => {
   const { t } = useTranslation()
@@ -48,6 +49,7 @@ const RenameChannelModal = () => {
           try {
             await editChannel({ id: channelId, name: values.name }).unwrap()
             dispatch(closeModal())
+            toast.success(t('toast.channelRenamed'))
           } catch {
             setErrors({ name: t('channels.renameError') })
           } finally {

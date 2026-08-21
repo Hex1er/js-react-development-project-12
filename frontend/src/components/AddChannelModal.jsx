@@ -6,6 +6,7 @@ import { useDispatch } from 'react-redux'
 import { useTranslation } from 'react-i18next'
 import { closeModal, setCurrentChannelId } from '../slices/uiSlice'
 import { useAddChannelMutation, useGetChannelsQuery } from '../slices/channelsApi'
+import { toast } from 'react-toastify'
 
 const AddChannelModal = () => {
   const { t } = useTranslation()
@@ -41,6 +42,7 @@ const AddChannelModal = () => {
             const newChannel = await addChannel({ name: values.name }).unwrap()
             dispatch(setCurrentChannelId(newChannel.id))
             dispatch(closeModal())
+            toast.success(t('toast.channelCreated'))
           } catch {
             setErrors({ name: t('channels.addError') })
           } finally {

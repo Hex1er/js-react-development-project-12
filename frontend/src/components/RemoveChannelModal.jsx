@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useTranslation } from 'react-i18next'
 import { closeModal, setCurrentChannelId } from '../slices/uiSlice'
 import { useRemoveChannelMutation, useGetChannelsQuery } from '../slices/channelsApi'
+import { toast } from 'react-toastify'
 
 const RemoveChannelModal = () => {
   const { t } = useTranslation()
@@ -28,6 +29,7 @@ const RemoveChannelModal = () => {
         if (defaultChannel) dispatch(setCurrentChannelId(defaultChannel.id))
       }
       dispatch(closeModal())
+      toast.success(t('toast.channelDeleted'))
     } catch {
       setIsSubmitting(false)
     }

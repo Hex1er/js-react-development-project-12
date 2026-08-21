@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useTranslation } from 'react-i18next'
+import { toast } from 'react-toastify'
 import { useGetChannelsQuery, channelsApi } from '../slices/channelsApi'
 import { useGetMessagesQuery, messagesApi } from '../slices/messagesApi'
 import { setCurrentChannelId } from '../slices/uiSlice'
@@ -14,8 +15,8 @@ const ChatPage = () => {
   const dispatch = useDispatch()
   const currentChannelId = useSelector((state) => state.ui.currentChannelId)
 
-  const { data: channels, isLoading: channelsLoading } = useGetChannelsQuery()
-  const { data: messages, isLoading: messagesLoading } = useGetMessagesQuery()
+  const { data: channels, isLoading: channelsLoading, isError: channelsError } = useGetChannelsQuery()
+  const { data: messages, isLoading: messagesLoading, isError: messagesError } = useGetMessagesQuery()
 
   const currentChannelIdRef = useRef(currentChannelId)
   useEffect(() => {
@@ -33,6 +34,20 @@ const ChatPage = () => {
       dispatch(setCurrentChannelId(defaultChannel.id))
     }
   }, [channels, currentChannelId, dispatch])
+
+  useEffect(() => {
+    if (channelsError || messagesError) {
+      toast.error(t('toast.loadingError'))
+    }
+  }, [channelsError, messagesError, t])
+
+  useEffect(() => {
+    const handleOffline = () => toast.error(t('toast.networkError'))
+    window.addEventListener('offline', handleOffline)
+    return () => {
+      window.removeEventListener('offline', handleOffline)
+    }
+  }, [t])
 
   useEffect(() => {
     const handleNewMessage = () => {
