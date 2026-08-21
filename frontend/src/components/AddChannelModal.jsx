@@ -4,9 +4,10 @@ import { Formik, Form } from 'formik'
 import * as Yup from 'yup'
 import { useDispatch } from 'react-redux'
 import { useTranslation } from 'react-i18next'
+import { toast } from 'react-toastify'
 import { closeModal, setCurrentChannelId } from '../slices/uiSlice'
 import { useAddChannelMutation, useGetChannelsQuery } from '../slices/channelsApi'
-import { toast } from 'react-toastify'
+import filter from '../profanityFilter'
 
 const AddChannelModal = () => {
   const { t } = useTranslation()
@@ -39,7 +40,8 @@ const AddChannelModal = () => {
         validationSchema={schema}
         onSubmit={async (values, { setSubmitting, setErrors }) => {
           try {
-            const newChannel = await addChannel({ name: values.name }).unwrap()
+            const cleanName = filter.clean(values.name)
+            const newChannel = await addChannel({ name: cleanName }).unwrap()
             dispatch(setCurrentChannelId(newChannel.id))
             dispatch(closeModal())
             toast.success(t('toast.channelCreated'))

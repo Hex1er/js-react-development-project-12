@@ -3,6 +3,7 @@ import { Formik, Form, Field } from 'formik'
 import { useSelector } from 'react-redux'
 import { useTranslation } from 'react-i18next'
 import { useAddMessageMutation } from '../slices/messagesApi'
+import filter from '../profanityFilter'
 
 const MessageForm = ({ channelId }) => {
   const { t } = useTranslation()
@@ -17,7 +18,7 @@ const MessageForm = ({ channelId }) => {
         setSendError(false)
         try {
           await addMessage({
-            body: values.body,
+            body: filter.clean(values.body),
             channelId,
             username,
           }).unwrap()

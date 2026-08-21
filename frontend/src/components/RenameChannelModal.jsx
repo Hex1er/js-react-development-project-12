@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next'
 import { closeModal } from '../slices/uiSlice'
 import { useEditChannelMutation, useGetChannelsQuery } from '../slices/channelsApi'
 import { toast } from 'react-toastify'
+import filter from '../profanityFilter'
 
 const RenameChannelModal = () => {
   const { t } = useTranslation()
@@ -47,7 +48,8 @@ const RenameChannelModal = () => {
         validationSchema={schema}
         onSubmit={async (values, { setSubmitting, setErrors }) => {
           try {
-            await editChannel({ id: channelId, name: values.name }).unwrap()
+            const cleanName = filter.clean(values.name)
+            await editChannel({ id: channelId, name: cleanName }).unwrap()
             dispatch(closeModal())
             toast.success(t('toast.channelRenamed'))
           } catch {
