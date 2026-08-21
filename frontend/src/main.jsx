@@ -1,18 +1,11 @@
 import { createRoot } from 'react-dom/client'
-import { Provider } from 'react-redux'
-import * as Sentry from '@sentry/react'
-import 'bootstrap/dist/css/bootstrap.min.css'
-import 'react-toastify/dist/ReactToastify.css'
-import './i18n'
-import App from './App.jsx'
-import store from './slices/index.js'
+import { io } from 'socket.io-client'
+import init from './init.jsx'
 
-Sentry.init({
-  dsn: import.meta.env.VITE_BUGSINK_DSN,
-})
+const runApp = async () => {
+  const socket = io()
+  const vdom = await init(socket)
+  createRoot(document.getElementById('root')).render(vdom)
+}
 
-createRoot(document.getElementById('root')).render(
-  <Provider store={store}>
-    <App />
-  </Provider>,
-)
+runApp()

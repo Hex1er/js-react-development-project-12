@@ -8,11 +8,12 @@ import { setCurrentChannelId } from '../slices/uiSlice'
 import ChannelsList from '../components/ChannelsList'
 import MessageForm from '../components/MessageForm'
 import ModalManager from '../components/ModalManager'
-import socket from '../socket'
+import { useSocket } from '../hooks/useSocket'
 
 const ChatPage = () => {
   const { t } = useTranslation()
   const dispatch = useDispatch()
+  const socket = useSocket()
   const currentChannelId = useSelector((state) => state.ui.currentChannelId)
 
   const { data: channels, isLoading: channelsLoading, isError: channelsError } = useGetChannelsQuery()
@@ -76,7 +77,7 @@ const ChatPage = () => {
       socket.off('renameChannel', handleChannelsChanged)
       socket.off('removeChannel', handleRemoveChannel)
     }
-  }, [dispatch])
+  }, [dispatch, socket])
 
   if (channelsLoading || messagesLoading) {
     return <div className="container mt-5">{t('chat.loading')}</div>
