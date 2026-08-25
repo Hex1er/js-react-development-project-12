@@ -1,13 +1,13 @@
 import { useRef, useEffect } from 'react'
 import { Modal, Form as BsForm, Button } from 'react-bootstrap'
 import { Formik, Form } from 'formik'
-import * as Yup from 'yup'
 import { useDispatch } from 'react-redux'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
-import { closeModal, setCurrentChannelId } from '../slices/uiSlice'
-import { useAddChannelMutation, useGetChannelsQuery } from '../slices/channelsApi'
-import filter from '../profanityFilter'
+import { closeModal, setCurrentChannelId } from '../../slices/uiSlice'
+import { useAddChannelMutation, useGetChannelsQuery } from '../../slices/channelsApi'
+import filter from '../../profanityFilter'
+import getChannelSchema from '../../validationSchemas/channelSchema'
 
 const AddChannelModal = () => {
   const { t } = useTranslation()
@@ -21,14 +21,21 @@ const AddChannelModal = () => {
   }, [])
 
   const existingNames = (channels || []).map((c) => c.name)
+  const schema = getChannelSchema(t, existingNames)
 
-  const schema = Yup.object().shape({
-    name: Yup.string()
-      .min(3, t('validation.channelNameLength'))
-      .max(20, t('validation.channelNameLength'))
-      .required(t('validation.required'))
-      .notOneOf(existingNames, t('validation.channelNameUnique')),
-  })
+  const handleSubmit = async (values, { setSubmitting, setErrors }) => {
+    try {
+      const cleanName = filter.clean(values.name)
+      const newChannel = await addChannel({ name: cleanName }).unwrap()
+      dispatch(setCurrentChannelId(newChannel.id))
+      dispatch(closeModal())
+      toast.success(t('toast.channelCreated'))
+    } catch {
+      setErrors({ name: t('channels.addError') })
+    } finally {
+      setSubmitting(false)
+    }
+  }
 
   return (
     <Modal show onHide={() => dispatch(closeModal())} centered>
@@ -38,19 +45,7 @@ const AddChannelModal = () => {
       <Formik
         initialValues={{ name: '' }}
         validationSchema={schema}
-        onSubmit={async (values, { setSubmitting, setErrors }) => {
-          try {
-            const cleanName = filter.clean(values.name)
-            const newChannel = await addChannel({ name: cleanName }).unwrap()
-            dispatch(setCurrentChannelId(newChannel.id))
-            dispatch(closeModal())
-            toast.success(t('toast.channelCreated'))
-          } catch {
-            setErrors({ name: t('channels.addError') })
-          } finally {
-            setSubmitting(false)
-          }
-        }}
+        onSubmit={handleSubmit}
       >
         {({ values, errors, handleChange, isSubmitting }) => (
           <Form>

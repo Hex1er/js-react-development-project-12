@@ -11,24 +11,26 @@ const MessageForm = ({ channelId }) => {
   const [addMessage] = useAddMessageMutation()
   const [sendError, setSendError] = useState(false)
 
+  const handleSubmit = async (values, { resetForm, setSubmitting }) => {
+    setSendError(false)
+    try {
+      await addMessage({
+        body: filter.clean(values.body),
+        channelId,
+        username,
+      }).unwrap()
+      resetForm()
+    } catch {
+      setSendError(true)
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
   return (
     <Formik
       initialValues={{ body: '' }}
-      onSubmit={async (values, { resetForm, setSubmitting }) => {
-        setSendError(false)
-        try {
-          await addMessage({
-            body: filter.clean(values.body),
-            channelId,
-            username,
-          }).unwrap()
-          resetForm()
-        } catch {
-          setSendError(true)
-        } finally {
-          setSubmitting(false)
-        }
-      }}
+      onSubmit={handleSubmit}
     >
       {({ isSubmitting, values }) => (
         <Form className="d-flex p-2 border-top">

@@ -7,7 +7,7 @@ import { useGetMessagesQuery, messagesApi } from '../slices/messagesApi'
 import { setCurrentChannelId } from '../slices/uiSlice'
 import ChannelsList from '../components/ChannelsList'
 import MessageForm from '../components/MessageForm'
-import ModalManager from '../components/ModalManager'
+import ModalManager from '../components/modal/ModalManager'
 import { useSocket } from '../hooks/useSocket'
 
 const ChatPage = () => {

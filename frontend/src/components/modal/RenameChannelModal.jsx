@@ -1,13 +1,13 @@
 import { useRef, useEffect } from 'react'
 import { Modal, Form as BsForm, Button } from 'react-bootstrap'
 import { Formik, Form } from 'formik'
-import * as Yup from 'yup'
 import { useDispatch, useSelector } from 'react-redux'
 import { useTranslation } from 'react-i18next'
-import { closeModal } from '../slices/uiSlice'
-import { useEditChannelMutation, useGetChannelsQuery } from '../slices/channelsApi'
 import { toast } from 'react-toastify'
-import filter from '../profanityFilter'
+import { closeModal } from '../../slices/uiSlice'
+import { useEditChannelMutation, useGetChannelsQuery } from '../../slices/channelsApi'
+import filter from '../../profanityFilter'
+import getChannelSchema from '../../validationSchemas/channelSchema'
 
 const RenameChannelModal = () => {
   const { t } = useTranslation()
@@ -27,14 +27,20 @@ const RenameChannelModal = () => {
   const existingNames = (channels || [])
     .filter((c) => c.id !== channelId)
     .map((c) => c.name)
+  const schema = getChannelSchema(t, existingNames)
 
-  const schema = Yup.object().shape({
-    name: Yup.string()
-      .min(3, t('validation.channelNameLength'))
-      .max(20, t('validation.channelNameLength'))
-      .required(t('validation.required'))
-      .notOneOf(existingNames, t('validation.channelNameUnique')),
-  })
+  const handleSubmit = async (values, { setSubmitting, setErrors }) => {
+    try {
+      const cleanName = filter.clean(values.name)
+      await editChannel({ id: channelId, name: cleanName }).unwrap()
+      dispatch(closeModal())
+      toast.success(t('toast.channelRenamed'))
+    } catch {
+      setErrors({ name: t('channels.renameError') })
+    } finally {
+      setSubmitting(false)
+    }
+  }
 
   if (!channel) return null
 
@@ -46,18 +52,7 @@ const RenameChannelModal = () => {
       <Formik
         initialValues={{ name: channel.name }}
         validationSchema={schema}
-        onSubmit={async (values, { setSubmitting, setErrors }) => {
-          try {
-            const cleanName = filter.clean(values.name)
-            await editChannel({ id: channelId, name: cleanName }).unwrap()
-            dispatch(closeModal())
-            toast.success(t('toast.channelRenamed'))
-          } catch {
-            setErrors({ name: t('channels.renameError') })
-          } finally {
-            setSubmitting(false)
-          }
-        }}
+        onSubmit={handleSubmit}
       >
         {({ values, errors, handleChange, isSubmitting }) => (
           <Form>

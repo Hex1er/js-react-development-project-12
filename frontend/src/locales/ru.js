@@ -55,6 +55,8 @@ export default {
       channelCreated: 'Канал создан',
       channelRenamed: 'Канал переименован',
       channelDeleted: 'Канал удалён',
+      networkError: 'Ошибка соединения',
+      loadingError: 'Не удалось загрузить данные',
     },
     notFound: {
       title: 'Страница не найдена',

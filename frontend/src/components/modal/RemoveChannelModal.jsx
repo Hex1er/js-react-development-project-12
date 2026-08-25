@@ -2,9 +2,9 @@ import { useRef, useEffect, useState } from 'react'
 import { Modal, Button } from 'react-bootstrap'
 import { useDispatch, useSelector } from 'react-redux'
 import { useTranslation } from 'react-i18next'
-import { closeModal, setCurrentChannelId } from '../slices/uiSlice'
-import { useRemoveChannelMutation, useGetChannelsQuery } from '../slices/channelsApi'
 import { toast } from 'react-toastify'
+import { closeModal, setCurrentChannelId } from '../../slices/uiSlice'
+import { useRemoveChannelMutation, useGetChannelsQuery } from '../../slices/channelsApi'
 
 const RemoveChannelModal = () => {
   const { t } = useTranslation()

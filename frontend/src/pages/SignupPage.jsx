@@ -1,11 +1,11 @@
 import { useState } from 'react'
 import { Formik, Form, Field, ErrorMessage } from 'formik'
-import * as Yup from 'yup'
 import { Link, useNavigate } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
 import { useTranslation } from 'react-i18next'
 import { setCredentials } from '../slices/authSlice'
 import { useSignupMutation } from '../slices/authApi'
+import getSignupSchema from '../validationSchemas/signupSchema'
 
 const SignupPage = () => {
   const { t } = useTranslation()
@@ -14,18 +14,29 @@ const SignupPage = () => {
   const dispatch = useDispatch()
   const [signup] = useSignupMutation()
 
-  const schema = Yup.object().shape({
-    username: Yup.string()
-      .min(3, t('validation.usernameLength'))
-      .max(20, t('validation.usernameLength'))
-      .required(t('validation.required')),
-    password: Yup.string()
-      .min(6, t('validation.passwordMin'))
-      .required(t('validation.required')),
-    confirmPassword: Yup.string()
-      .oneOf([Yup.ref('password')], t('validation.passwordsMustMatch'))
-      .required(t('validation.required')),
-  })
+  const schema = getSignupSchema(t)
+
+  const handleSubmit = async (values, { setSubmitting }) => {
+    setSignupFailed(false)
+    try {
+      const { username, token } = await signup({
+        username: values.username,
+        password: values.password,
+      }).unwrap()
+      localStorage.setItem('token', token)
+      localStorage.setItem('username', username)
+      dispatch(setCredentials({ username, token }))
+      navigate('/')
+    } catch (error) {
+      if (error.status === 409) {
+        setSignupFailed(true)
+      } else {
+        throw error
+      }
+    } finally {
+      setSubmitting(false)
+    }
+  }
 
   return (
     <div className="container mt-5">
@@ -33,27 +44,7 @@ const SignupPage = () => {
       <Formik
         initialValues={{ username: '', password: '', confirmPassword: '' }}
         validationSchema={schema}
-        onSubmit={async (values, { setSubmitting }) => {
-          setSignupFailed(false)
-          try {
-            const { username, token } = await signup({
-              username: values.username,
-              password: values.password,
-            }).unwrap()
-            localStorage.setItem('token', token)
-            localStorage.setItem('username', username)
-            dispatch(setCredentials({ username, token }))
-            navigate('/')
-          } catch (error) {
-            if (error.status === 409) {
-              setSignupFailed(true)
-            } else {
-              throw error
-            }
-          } finally {
-            setSubmitting(false)
-          }
-        }}
+        onSubmit={handleSubmit}
       >
         {({ isSubmitting }) => (
           <Form>

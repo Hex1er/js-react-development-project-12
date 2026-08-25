@@ -13,29 +13,31 @@ const LoginPage = () => {
   const dispatch = useDispatch()
   const [login] = useLoginMutation()
 
+  const handleSubmit = async (values, { setSubmitting }) => {
+    setAuthFailed(false)
+    try {
+      const { token } = await login(values).unwrap()
+      localStorage.setItem('token', token)
+      localStorage.setItem('username', values.username)
+      dispatch(setCredentials({ username: values.username, token }))
+      navigate('/')
+    } catch (error) {
+      if (error.status === 401) {
+        setAuthFailed(true)
+      } else {
+        throw error
+      }
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
   return (
     <div className="container mt-5">
       <h1>{t('login.title')}</h1>
       <Formik
         initialValues={{ username: '', password: '' }}
-        onSubmit={async (values, { setSubmitting }) => {
-          setAuthFailed(false)
-          try {
-            const { token } = await login(values).unwrap()
-            localStorage.setItem('token', token)
-            localStorage.setItem('username', values.username)
-            dispatch(setCredentials({ username: values.username, token }))
-            navigate('/')
-          } catch (error) {
-            if (error.status === 401) {
-              setAuthFailed(true)
-            } else {
-              throw error
-            }
-          } finally {
-            setSubmitting(false)
-          }
-        }}
+        onSubmit={handleSubmit}
       >
         {({ isSubmitting }) => (
           <Form>

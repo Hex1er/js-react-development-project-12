@@ -55,6 +55,8 @@ export default {
       channelCreated: 'Channel created',
       channelRenamed: 'Channel renamed',
       channelDeleted: 'Channel deleted',
+      networkError: 'Connection error',
+      loadingError: 'Failed to load data',
     },
     notFound: {
       title: 'Page not found',
