@@ -33,6 +33,7 @@ export default {
       loading: 'Loading...',
       channels: 'Channels',
       noMessages: 'No messages yet',
+      newMessageLabel: 'New message',
       sendPlaceholder: 'Enter a message...',
       send: 'Send',
       sendError: 'Failed to send, check your connection',

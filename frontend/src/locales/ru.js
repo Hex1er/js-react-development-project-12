@@ -33,6 +33,7 @@ export default {
       loading: 'Загрузка...',
       channels: 'Каналы',
       noMessages: 'Сообщений пока нет',
+      newMessageLabel: 'Новое сообщение',
       sendPlaceholder: 'Введите сообщение...',
       send: 'Отправить',
       sendError: 'Не удалось отправить, проверьте соединение',
