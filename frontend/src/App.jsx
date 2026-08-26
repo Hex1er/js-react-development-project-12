@@ -13,7 +13,7 @@ function App() {
     <BrowserRouter>
       <div className="d-flex flex-column h-100">
         <Header />
-        <div className="flex-grow-1">
+        <div className="flex-grow-1" style={{ minHeight: 0 }}>
           <Routes>
             <Route element={<PrivateRoute />}>
               <Route path="/" element={<ChatPage />} />

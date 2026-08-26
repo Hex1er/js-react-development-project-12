@@ -79,13 +79,18 @@ const ChatPage = () => {
     }
   }, [dispatch, socket])
 
-  if (channelsLoading || messagesLoading) {
-    return <div className="container mt-5">{t('chat.loading')}</div>
-  }
-
   const channelMessages = (messages || []).filter(
     (m) => m.channelId === currentChannelId,
   )
+
+  const messagesEndRef = useRef(null)
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }, [channelMessages.length])
+
+  if (channelsLoading || messagesLoading) {
+    return <div className="container mt-5">{t('chat.loading')}</div>
+  }
 
   return (
     <div className="container-fluid h-100">
@@ -93,7 +98,7 @@ const ChatPage = () => {
         <div className="col-3 border-end p-0">
           <ChannelsList channels={channels} currentChannelId={currentChannelId} />
         </div>
-        <div className="col-9 d-flex flex-column">
+        <div className="col-9 d-flex flex-column p-0">
           <div className="p-3 flex-grow-1 overflow-auto">
             {channelMessages.length === 0 && (
               <div className="text-muted">{t('chat.noMessages')}</div>
@@ -103,6 +108,7 @@ const ChatPage = () => {
                 <b>{message.username}</b>: {message.body}
               </div>
             ))}
+            <div ref={messagesEndRef} />
           </div>
           {currentChannelId && <MessageForm channelId={currentChannelId} />}
         </div>

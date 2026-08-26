@@ -62,6 +62,7 @@ const AddChannelModal = () => {
                   onChange={handleChange}
                   isInvalid={!!errors.name}
                   disabled={isSubmitting}
+                  autoComplete="off"
                 />
                 <BsForm.Control.Feedback type="invalid">
                   {errors.name}

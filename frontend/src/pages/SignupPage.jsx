@@ -55,6 +55,7 @@ const SignupPage = () => {
                 name="username"
                 id="username"
                 className={`form-control ${signupFailed ? 'is-invalid' : ''}`}
+                autoComplete="off"
               />
               <ErrorMessage name="username" component="div" className="invalid-feedback d-block" />
             </div>
@@ -65,6 +66,7 @@ const SignupPage = () => {
                 name="password"
                 id="password"
                 className={`form-control ${signupFailed ? 'is-invalid' : ''}`}
+                autoComplete="off"
               />
               <ErrorMessage name="password" component="div" className="invalid-feedback d-block" />
             </div>
@@ -75,6 +77,7 @@ const SignupPage = () => {
                 name="confirmPassword"
                 id="confirmPassword"
                 className={`form-control ${signupFailed ? 'is-invalid' : ''}`}
+                autoComplete="off"
               />
               <ErrorMessage name="confirmPassword" component="div" className="invalid-feedback d-block" />
               {signupFailed && (

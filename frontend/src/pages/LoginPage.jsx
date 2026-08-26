@@ -5,6 +5,7 @@ import { useDispatch } from 'react-redux'
 import { useTranslation } from 'react-i18next'
 import { setCredentials } from '../slices/authSlice'
 import { useLoginMutation } from '../slices/authApi'
+import getLoginSchema from '../validationSchemas/loginSchema'
 
 const LoginPage = () => {
   const { t } = useTranslation()
@@ -12,6 +13,7 @@ const LoginPage = () => {
   const navigate = useNavigate()
   const dispatch = useDispatch()
   const [login] = useLoginMutation()
+  const schema = getLoginSchema(t)
 
   const handleSubmit = async (values, { setSubmitting }) => {
     setAuthFailed(false)
@@ -37,6 +39,7 @@ const LoginPage = () => {
       <h1>{t('login.title')}</h1>
       <Formik
         initialValues={{ username: '', password: '' }}
+        validationSchema={schema}
         onSubmit={handleSubmit}
       >
         {({ isSubmitting }) => (
@@ -48,6 +51,7 @@ const LoginPage = () => {
                 name="username"
                 className={`form-control ${authFailed ? 'is-invalid' : ''}`}
                 id="username"
+                autoComplete="off"
               />
             </div>
             <div className="mb-3">
@@ -57,6 +61,7 @@ const LoginPage = () => {
                 name="password"
                 className={`form-control ${authFailed ? 'is-invalid' : ''}`}
                 id="password"
+                autoComplete="off"
               />
               {authFailed && (
                 <div className="invalid-feedback d-block">

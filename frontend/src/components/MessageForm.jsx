@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { Formik, Form, Field } from 'formik'
 import { useSelector } from 'react-redux'
 import { useTranslation } from 'react-i18next'
@@ -10,6 +10,11 @@ const MessageForm = ({ channelId }) => {
   const username = useSelector((state) => state.auth.username)
   const [addMessage] = useAddMessageMutation()
   const [sendError, setSendError] = useState(false)
+  const inputRef = useRef(null)
+
+  useEffect(() => {
+    inputRef.current?.focus()
+  }, [channelId])
 
   const handleSubmit = async (values, { resetForm, setSubmitting }) => {
     setSendError(false)
@@ -40,6 +45,7 @@ const MessageForm = ({ channelId }) => {
           <Field
             id="messageBody"
             name="body"
+            innerRef={inputRef}
             className="form-control me-2"
             placeholder={t('chat.sendPlaceholder')}
             autoComplete="off"
