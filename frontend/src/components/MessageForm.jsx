@@ -40,7 +40,7 @@ const MessageForm = ({ channelId }) => {
       {({ isSubmitting, values }) => (
         <Form className="d-flex p-2 border-top">
           <label htmlFor="messageBody" className="visually-hidden">
-            {t('chat.sendPlaceholder')}
+            {t('chat.newMessageLabel')}
           </label>
           <Field
             id="messageBody"
