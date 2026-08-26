@@ -38,13 +38,15 @@ const ChannelsList = ({ channels, currentChannelId }) => {
                 >
                   <span className="visually-hidden">{t('channels.manage')}</span>
                 </Dropdown.Toggle>
-                <Dropdown.Menu>
+                <Dropdown.Menu role="menu">
                   <Dropdown.Item
+                    role="menuitem"
                     onClick={() => dispatch(openModal({ type: 'renaming', channelId: channel.id }))}
                   >
                     {t('channels.rename')}
                   </Dropdown.Item>
                   <Dropdown.Item
+                    role="menuitem"
                     onClick={() => dispatch(openModal({ type: 'removing', channelId: channel.id }))}
                   >
                     {t('channels.delete')}
